@@ -49,7 +49,10 @@ class ConfigSessionProvider(system: ActorSystem, config: Config) extends Session
 
   protected def createQueryLogger(): Option[QueryLogger] =
     if (config.getBoolean("log-queries"))
-      Some(QueryLogger.builder().build())
+      Some(QueryLogger.builder()
+        .withConstantThreshold(config.getLong("query-logging.slowQueryLatencyThresholdMillis"))
+        .withMaxQueryStringLength(config.getInt("query-logging.maxQueryStringLength"))
+        .build())
     else None
 
   val fetchSize = config.getInt("max-result-size")
